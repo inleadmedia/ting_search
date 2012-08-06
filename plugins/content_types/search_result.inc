@@ -78,7 +78,8 @@ function ting_search_search_result_content_type_render($subtype, $conf, $panel_a
   }
 
   if (!empty($results['#results'])) {
-    $output = "<ol class=\"search-results $conf[type]-results\">\n";
+    $output = theme('ting_search_pager', array('tags' => NULL,));
+    $output .= "<ol class=\"search-results $conf[type]-results\">\n";
     foreach ($results['#results'] as $result) {
       $output .= theme('search_result', array('result' => $result, 'module' => $conf['type']));
     }
