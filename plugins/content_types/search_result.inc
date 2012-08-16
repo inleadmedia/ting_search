@@ -91,7 +91,12 @@ function ting_search_search_result_content_type_render($subtype, $conf, $panel_a
   else {
     if (empty($conf['override_empty'])) {
       $block->title = t('Your search yielded no results');
-      $block->content = search_help('search#noresults', drupal_help_arg());
+      $block->content .= t('<ul><li>Try to search for <a href="http://bibliotek.dk/vis.php?origin=kommando&field1=fritekst&term1='
+        . $keys
+        . '">'
+        . $keys
+        . ' on bibliotek.dk</a>.</li></ul>')
+        . search_help('search#noresults', drupal_help_arg());
     }
     else {
       $block->title = $conf['empty_title'];
