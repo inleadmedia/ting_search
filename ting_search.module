@@ -845,7 +845,7 @@ function ting_search_menu_local_tasks_alter(&$data, $router_item, $root_path) {
 
   if ($is_local_menu_search) {
 
-    $ting_total_objs = '';
+    $ting_total_objs = '0';
     $ting_search_result = drupal_static('ting_search_results');
     $ting_total_objs = $ting_search_result->numTotalObjects;
 
@@ -867,7 +867,7 @@ function ting_search_menu_local_tasks_alter(&$data, $router_item, $root_path) {
       $ting_total_objs = $_SESSION['last_ting_search_amount'];
     }
 
-    $site_total_objs = '';
+    $site_total_objs = '0';
     $view = views_get_view('ding_node_search');
     if ($view) {
       $view->set_display('default');
