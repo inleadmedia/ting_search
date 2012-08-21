@@ -843,7 +843,7 @@ function ting_search_menu_local_tasks_alter(&$data, $router_item, $root_path) {
     )
   ;
 
-  if (is_local_menu_search) {
+  if ($is_local_menu_search) {
 
     $ting_total_objs = '';
     $ting_search_result = drupal_static('ting_search_results');
