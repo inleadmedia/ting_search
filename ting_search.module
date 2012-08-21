@@ -870,7 +870,7 @@ function ting_search_menu_local_tasks_alter(&$data, $router_item, $root_path) {
       }
     }
 
-    foreach ($data['tabs'][0]['output'] as $key=>$item) {
+    foreach ($data['tabs'][0]['output'] as $key => $item) {
       if ($item['#link']['path'] == 'search/ting/%') {
         $item['#link']['title'] = $item['#link']['title'] . ' [' . $ting_total_objs . ']';
         $data['tabs'][0]['output'][$key]['#link']['title'] = $item['#link']['title'];
