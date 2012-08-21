@@ -830,9 +830,17 @@ function _ting_search_quote_callback($matches) {
 function ting_search_menu_local_tasks_alter(&$data, $router_item, $root_path) {
 
   $is_local_menu_search =
-    ($data['tabs'][0]['output'][0]['#link']['path'] == 'search/ting/%')
+    (
+      isset($data['tabs'][0]['output'][0]['#link']['path'])
+      &&
+      $data['tabs'][0]['output'][0]['#link']['path'] == 'search/ting/%'
+    )
     &&
-    ($data['tabs'][0]['output'][1]['#link']['path'] == 'search/node/%')
+    (
+      isset($data['tabs'][0]['output'][1]['#link']['path'])
+      &&
+      $data['tabs'][0]['output'][1]['#link']['path'] == 'search/node/%'
+    )
   ;
 
   if (is_local_menu_search) {
