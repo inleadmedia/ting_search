@@ -818,3 +818,82 @@ function _ting_search_quote_callback($matches) {
   // We have a quote. Just return it.
   return $matches[1];
 }
+
+
+
+/**
+ * Implements hook_menu_local_tasks_alter().
+ *
+ * Alters tab`s names at search results pages (ting and site search)
+ *  to have amount of search results.
+ */
+function ting_search_menu_local_tasks_alter(&$data, $router_item, $root_path) {
+
+  $is_local_menu_search =
+    (
+      isset($data['tabs'][0]['output'][0]['#link']['path'])
+      &&
+      $data['tabs'][0]['output'][0]['#link']['path'] == 'search/ting/%'
+    )
+    &&
+    (
+      isset($data['tabs'][0]['output'][1]['#link']['path'])
+      &&
+      $data['tabs'][0]['output'][1]['#link']['path'] == 'search/node/%'
+    )
+  ;
+
+  if ($is_local_menu_search) {
+
+    $ting_total_objs = '0';
+    $ting_search_result = drupal_static('ting_search_results');
+    $ting_total_objs = $ting_search_result->numTotalObjects;
+
+    if (empty($ting_total_objs)) {
+      $ting_total_objs = '0';
+    }
+
+    $last_ting_search_amount_exist =
+      isset($_SESSION['last_ting_search_amount'])
+      &&
+      !empty($_SESSION['last_ting_search_amount'])
+    ;
+
+    if (!$last_ting_search_amount_exist && $ting_total_objs != '0') {
+      $_SESSION['last_ting_search_amount'] = $ting_total_objs;
+    }
+    if ($last_ting_search_amount_exist && $ting_total_objs != '0') {
+      if ($_SESSION['last_ting_search_amount'] != $ting_total_objs) {
+        $_SESSION['last_ting_search_amount'] = $ting_total_objs;
+      }
+    }
+
+    if ($last_ting_search_amount_exist && $ting_total_objs == '0') {
+      $ting_total_objs = $_SESSION['last_ting_search_amount'];
+    }
+
+    $site_total_objs = '0';
+    $view = views_get_view('ding_node_search');
+    if ($view) {
+      $view->set_display('default');
+      $view->set_arguments(array(arg(2)));
+      $view_rendered_content = $view->preview();
+      if (!empty($view->result)) {
+        $site_total_objs = $view->total_rows;
+      }
+    }
+
+    foreach ($data['tabs'][0]['output'] as $key => $item) {
+      if ($item['#link']['path'] == 'search/ting/%') {
+        $item['#link']['title'] = $item['#link']['title'] . ' [' . $ting_total_objs . ']';
+        $data['tabs'][0]['output'][$key]['#link']['title'] = $item['#link']['title'];
+      }
+      if ($item['#link']['path'] == 'search/node/%') {
+        $item['#link']['title'] = $item['#link']['title'] . ' [' . $site_total_objs . ']';
+        $data['tabs'][0]['output'][$key]['#link']['title'] = $item['#link']['title'];
+      }
+    }
+
+  }
+
+}
