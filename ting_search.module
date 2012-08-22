@@ -845,32 +845,16 @@ function ting_search_menu_local_tasks_alter(&$data, $router_item, $root_path) {
 
   if ($is_local_menu_search) {
 
-    $ting_total_objs = '0';
-    $ting_search_result = drupal_static('ting_search_results');
-    $ting_total_objs = $ting_search_result->numTotalObjects;
-
-    if (empty($ting_total_objs)) {
-      $ting_total_objs = '0';
-    }
-
-    $last_ting_search_amount_exist =
-      isset($_SESSION['last_ting_search_amount'])
-      &&
-      !empty($_SESSION['last_ting_search_amount'])
-    ;
-
-    if (!$last_ting_search_amount_exist && $ting_total_objs != '0') {
-      $_SESSION['last_ting_search_amount'] = $ting_total_objs;
-    }
-    if ($last_ting_search_amount_exist && $ting_total_objs != '0') {
-      if ($_SESSION['last_ting_search_amount'] != $ting_total_objs) {
-        $_SESSION['last_ting_search_amount'] = $ting_total_objs;
+    $active_tab = '';
+    foreach ($data['tabs'][0]['output'] as $key => $item) {
+      if (array_key_exists ('#active', $item )) {
+        $active_tab = $item['#link']['path'];
+        break;
       }
     }
 
-    if ($last_ting_search_amount_exist && $ting_total_objs == '0') {
-      $ting_total_objs = $_SESSION['last_ting_search_amount'];
-    }
+    $ting_search_result = drupal_static('ting_search_results');
+    $ting_total_objs = (!empty($ting_search_result->numTotalObjects)) ? $ting_search_result->numTotalObjects : '0';
 
     $site_total_objs = '0';
     $view = views_get_view('ding_node_search');
@@ -880,6 +864,22 @@ function ting_search_menu_local_tasks_alter(&$data, $router_item, $root_path) {
       $view_rendered_content = $view->preview();
       if (!empty($view->result)) {
         $site_total_objs = $view->total_rows;
+      }
+    }
+
+    $last_ting_search_amount_exist =
+      isset($_SESSION['last_ting_search_amount'])
+      &&
+      !empty($_SESSION['last_ting_search_amount'])
+    ;
+
+    if ($active_tab == 'search/ting/%') {
+      $_SESSION['last_ting_search_amount'] = $ting_total_objs;
+    }
+    elseif ($active_tab == 'search/node/%') {
+      if ($last_ting_search_amount_exist) {
+        $ting_total_objs = $_SESSION['last_ting_search_amount'];
+        unset($_SESSION['last_ting_search_amount']);
       }
     }
 
