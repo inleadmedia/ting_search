@@ -860,6 +860,9 @@ function ting_search_menu_local_tasks_alter(&$data, $router_item, $root_path) {
     $view = views_get_view('ding_node_search');
     if ($view) {
       $view->set_display('default');
+      $pager = $view->display_handler->get_option('pager');
+      $pager['type'] = 'none';
+      $view->display_handler->set_option('pager', $pager);
       $view->set_arguments(array(arg(2)));
       $view_rendered_content = $view->preview();
       if (!empty($view->result)) {
